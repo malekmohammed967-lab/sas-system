@@ -1,48 +1,48 @@
 import streamlit as st
 import datetime
 
-class SASP_AdvancedSystem:
-    def __init__(self):
-        self.abjad = {'أ':1, 'ب':2, 'ج':3, 'د':4, 'ه':5, 'و':6, 'ز':7, 'ح':8, 'ط':9, 'ي':10, 'ك':20, 'ل':30, 'م':40, 'ن':50, 'س':60, 'ع':70, 'ف':80, 'ص':90, 'ق':100, 'ر':200, 'ش':300, 'ت':400, 'ث':500, 'خ':600, 'ذ':700, 'ض':800, 'ظ':900, 'غ':1000}
-        self.kings = {
-            "نار": {"علوي": "رقايائيل", "سفلي": "مذهب", "كوكب": "الشمس", "بخور": "لبان ذكر"},
-            "تراب": {"علوي": "كسفيائيل", "سفلي": "الأحمر", "كوكب": "زحل", "بخور": "مستكة"},
-            "هواء": {"علوي": "جبرائيل", "سفلي": "الأبيض", "كوكب": "المشتري", "بخور": "عود"},
-            "ماء": {"علوي": "عنقيائيل", "سفلي": "شمروش", "كوكب": "الزهرة", "بخور": "جاوى"}
-        }
+# --- قاعدة بيانات المراجع المدمجة ---
+KNOWLEDGE_BASE = {
+    "عوارض": "يُوصى بالرقية الشرعية مع تبخير باللبان الذكر، ومراجعة أوفاق الطبع الناري.",
+    "أسحار": "يُستخرج وفق الإبطال من 'تاج الملوك'، مع التركيز على طبع الماء وتكرار الأسماء القهرية.",
+    "مس": "تحتاج إلى 'تحصين' مكثف باستخدام أسماء الجلالة والملك العلوي الموكل بالطبع الغالب.",
+    "زواج": "حساب التوافق (الزوج + الزوجة) لاستخراج وفق التثبيت والرزق.",
+    "فراق": "تحتاج لحساب الكاركة العكسية لفك الارتباط الطاقي."
+}
 
-    def calculate_total(self, text):
-        return sum(self.abjad.get(c, 0) for c in text)
+def calculate_abjad(text):
+    abjad_map = {'أ':1, 'ب':2, 'ج':3, 'د':4, 'ه':5, 'و':6, 'ز':7, 'ح':8, 'ط':9, 'ي':10, 'ك':20, 'ل':30, 'م':40, 'ن':50, 'س':60, 'ع':70, 'ف':80, 'ص':90, 'ق':100, 'ر':200, 'ش':300, 'ت':400, 'ث':500, 'خ':600, 'ذ':700, 'ض':800, 'ظ':900, 'غ':1000}
+    return sum(abjad_map.get(c, 0) for c in text)
 
-    def process_work(self, student, target, work_type, date):
-        total_s = self.calculate_total(student)
-        total_t = self.calculate_total(target)
-        final_total = total_s + total_t
-        tabi = list(self.kings.keys())[final_total % 4]
-        
-        return {
-            "العدد_المركب": final_total,
-            "الطبع_الغالب": tabi,
-            "الملك_العلوي": self.kings[tabi]["علوي"],
-            "الملك_السفلي": self.kings[tabi]["سفلي"],
-            "الكوكب_المناسب": self.kings[tabi]["كوكب"],
-            "البخور_اللازم": self.kings[tabi]["بخور"],
-            "التصريف": f"عمل {work_type} بين {student} و {target} في يوم {date.strftime('%A')}"
-        }
+# --- الواجهة (مطابقة لـ 1000069214.jpg) ---
+st.title("نظام سي عبد الله - SASP v3")
 
-# واجهة المستخدم
-st.title("نظام سي عبد الله الموسوعي - SASP v2")
-name = st.text_input("اسم الطالب:")
-target_name = st.text_input("اسم المطلوب:")
-work_type = st.selectbox("نوع العمل:", ["زواج", "فراق", "جلب رزق", "إبطال سحر"])
-date = st.date_input("تاريخ العمل:")
+name = st.text_input("اسم السائل (المجرد):", placeholder="مثال: أنور")
+mother_name = st.text_input("اسم الأم:", placeholder="مثال: نعيمة")
+partner_name = st.text_input("اسم الشريك (اختياري):")
+date = st.date_input("تاريخ الولادة:")
+purpose = st.selectbox("مقصد الكشف والتحقيق الفوري:", ["كشف عام (عوارض، أسحار، ومس الجو)", "زواج", "فراق", "رزق"])
+complaint = st.text_area("المسألة أو الشكوى (وعلامات الجسد):")
+grid_type = st.selectbox("قاعدة النزول وتوليد الهيكل الطاقي:", ["وفق مثلث غزالي منضبط (3 × 3)", "وفق مربع (4 × 4)"])
 
-if st.button("استخراج المخطوطة"):
-    system = SASP_AdvancedSystem()
-    results = system.process_work(name, target_name, work_type, date)
+if st.button("بدء الكشف والتحليل"):
+    total = calculate_abjad(name) + calculate_abjad(mother_name)
+    tabi_list = ["نار", "تراب", "هواء", "ماء"]
+    tabi = tabi_list[total % 4]
     
-    st.write("### مخرجات المخطوطة الدقيقة:")
-    for key, value in results.items():
-        st.write(f"**{key}**: {value}")
+    st.success(f"التحليل الرقمي: العدد {total} - الطبع {tabi}")
     
-    st.info("قم بتسجيل هذه البيانات في فهرسك الخاص لاستخدامها في وقت العمل المناسب.")
+    # استنتاج الذكاء الاصطناعي للمراجع
+    st.write("### الاستنتاج الخبير من المراجع:")
+    found = False
+    for key in KNOWLEDGE_BASE:
+        if key in purpose or key in complaint:
+            st.write(f"- **{key.upper()}**: {KNOWLEDGE_BASE[key]}")
+            found = True
+    if not found:
+        st.write("النتيجة: الكشف يستدعي مراجعة 'شمس المعارف' للباب المتعلق بـ " + purpose)
+
+    # توليد هيكل طاقي مبدئي
+    st.write(f"### الهيكل الطاقي ({grid_type}):")
+    st.write(f"سيتم تنزيل الأعداد وفق القاعدة: {total} + عدد الملك العلوي.")
+    st.table({"الخانة": ["الخانة 1", "الخانة 2", "الخانة 3"], "القيمة": [total+1, total+2, total+3]})
